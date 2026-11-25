@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://script.google.com https://*.googleusercontent.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Teste de conexão</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="topo"><div class="topo-in"><span id="marca" aria-hidden="true"></span><span class="topo-nome">ProLEEI-MT</span></div></header>
+<main class="miolo">
+  <section class="tela estreita">
+    <h1 id="t-teste" tabindex="-1">Teste de conexão</h1>
+    <p class="lead">Confere se o sistema está bem instalado. Quem administra deve abrir esta página depois de seguir o Passo 7 do LEIA-ME. As formadoras não precisam dela.</p>
+    <ul id="testes" class="lista-folha testes" aria-live="polite"></ul>
+    <p id="resumo" class="nota-info" role="status" hidden></p>
+    <div class="acoes">
+      <button class="btn primario" id="btn-refazer" type="button">Testar de novo</button>
+    </div>
+    <p class="suave pequeno">Este teste mostra só se o sistema funciona. Ele não mostra nem grava dados de pessoas.</p>
+  </section>
+  <p class="rodape">Programa Leitura e Escrita na Educação Infantil (ProLEEI-MT).</p>
+</main>
+<noscript><p class="miolo">Esta página precisa do JavaScript ativado no navegador.</p></noscript>
+<script src="config.js"></script>
+<script src="comum.js"></script>
+<script src="teste.js"></script>
+</body>
+</html>

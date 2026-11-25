@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://script.google.com https://*.googleusercontent.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Declarações de participação</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="topo"><div class="topo-in"><span id="marca" aria-hidden="true"></span><span class="topo-nome">ProLEEI-MT</span></div></header>
+<main class="miolo">
+
+  <section id="tela-entrada" class="tela">
+    <h1 id="t-entrada" tabindex="-1">Declarações de participação</h1>
+    <p class="lead">Peça aqui as declarações das cursistas da sua turma. Os PDFs chegam no seu e-mail, prontos para você assinar.</p>
+    <p class="nota-info" id="aviso-saiu" role="status" hidden>Você saiu. Para fazer outro pedido, entre de novo.</p>
+    <form id="form-entrada" class="folha" novalidate>
+      <div class="campo">
+        <label for="email">Seu e-mail de formadora</label>
+        <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required>
+        <p class="ajuda">Informe o mesmo e-mail cadastrado no AVAMEC Interativo.</p>
+      </div>
+      <div class="campo" id="campo-cpf">
+        <label for="cpf">Seu CPF</label>
+        <input id="cpf" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="20" aria-describedby="ajuda-cpf">
+        <p class="ajuda" id="ajuda-cpf">Só os números. Usamos o CPF apenas para confirmar que é você; ele não fica guardado.</p>
+      </div>
+      <div class="campo" id="campo-codigo" hidden>
+        <label for="codigo-acesso">Código de acesso</label>
+        <input id="codigo-acesso" type="text" autocomplete="off" autocapitalize="none" spellcheck="false">
+        <p class="ajuda">A coordenação enviou este código para você.</p>
+      </div>
+      <p class="erro" id="erro-entrada" role="alert" hidden></p>
+      <div class="acoes" style="margin-top:20px">
+        <button class="btn primario" id="btn-entrar" type="submit">Continuar</button>
+      </div>
+    </form>
+    <p class="rodape-link">Quer conferir uma declaração que recebeu? <a id="link-verificar" href="#">Abra a verificação</a>.</p>
+  </section>
+
+  <section id="tela-lista" class="tela" hidden>
+    <div class="cabeca">
+      <div>
+        <h1 id="t-lista" tabindex="-1">Olá</h1>
+        <p class="suave pequeno">Pedido em nome de <span id="email-sessao"></span>.</p>
+      </div>
+      <button class="btn secundario" id="btn-sair-lista" type="button">Sair</button>
+    </div>
+    <div id="bloco-turma" class="campo" hidden>
+      <label for="seletor-turma">Turma</label>
+      <select id="seletor-turma"></select>
+    </div>
+    <div>
+      <h2 id="titulo-turma"></h2>
+      <p class="suave" id="resumo-turma"></p>
+    </div>
+    <div class="aviso" id="aviso-turma" role="alert" hidden><span id="aviso-turma-texto"></span></div>
+    <div id="area-lista">
+      <p class="lead">Marque as cursistas que devem receber a declaração e informe a carga horária (CH) de cada uma.</p>
+      <p class="nota-info" id="nada-a-pedir" role="status" style="margin-top:16px" hidden></p>
+      <div class="lista-folha" style="margin-top:16px">
+        <div class="ferramentas">
+          <label class="rotulo" for="busca" style="margin-bottom:6px">Buscar cursista</label>
+          <input id="busca" type="search" autocomplete="off" placeholder="Digite parte do nome">
+          <div class="ferramentas-linha">
+            <label class="marcar-todas"><input type="checkbox" id="marcar-todas"> <span id="rotulo-marcar-todas">Marcar todas</span></label>
+            <label class="marcar-todas"><input type="checkbox" id="mostrar-emitidas"> Mostrar também quem já tem declaração</label>
+            <div class="padrao">
+              <label for="ch-padrao">Mesma CH para as marcadas</label>
+              <input id="ch-padrao" type="text" inputmode="numeric" autocomplete="off" aria-describedby="ajuda-padrao">
+              <button class="btn secundario" id="btn-aplicar" type="button">Aplicar</button>
+            </div>
+          </div>
+          <p class="ajuda" id="ajuda-padrao" hidden></p>
+        </div>
+        <ul id="lista"></ul>
+      </div>
+      <p class="rodape" id="rodape-lista"></p>
+      <div class="barra" id="barra">
+        <div class="barra-info">
+          <strong id="contagem" aria-live="polite">Nenhuma cursista marcada</strong>
+          <p class="erro" id="erro-lista" role="alert" hidden></p>
+        </div>
+        <button class="btn primario" id="btn-revisar" type="button" disabled>Revisar pedido</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="tela-revisao" class="tela" hidden>
+    <h2 id="t-revisao" tabindex="-1">Confira o pedido</h2>
+    <p id="rev-texto"></p>
+    <p class="aviso" id="rev-correcao" hidden>Atenção: ao corrigir a carga horária, a declaração anterior é anulada e deixa de valer. Use só a nova.</p>
+    <ul class="rev-lista" id="rev-lista"></ul>
+    <p class="suave pequeno" id="rev-assinar">Para assinar pelo Gov.br, entre em <a href="https://assinador.iti.br" target="_blank" rel="noopener noreferrer">assinador.iti.br</a> com a sua conta gov.br (nível prata ou ouro). É gratuito.</p>
+    <p class="erro" id="erro-revisao" role="alert" hidden></p>
+    <div class="acoes">
+      <button class="btn primario" id="btn-enviar" type="button">Enviar pedido</button>
+      <button class="btn secundario" id="btn-voltar" type="button">Voltar e ajustar</button>
+    </div>
+  </section>
+
+  <section id="tela-pronto" class="tela" hidden>
+    <div class="conclusao">
+      <div id="selo-pronto"></div>
+      <h2 id="t-pronto" tabindex="-1">Pedido enviado</h2>
+      <p id="pronto-texto"></p>
+      <p id="pronto-extra" class="suave"></p>
+      <div class="acoes">
+        <button class="btn primario" id="btn-outro" type="button">Fazer outro pedido</button>
+        <button class="btn texto" id="btn-sair" type="button">Sair</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="rodape">Programa Leitura e Escrita na Educação Infantil (ProLEEI-MT).</p>
+</main>
+<noscript><p class="miolo">Esta página precisa do JavaScript ativado no navegador.</p></noscript>
+<script src="config.js"></script>
+<script src="comum.js"></script>
+<script src="pedido.js"></script>
+</body>
+</html>
