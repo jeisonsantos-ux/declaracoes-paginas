@@ -49,11 +49,18 @@
       return;
     }
     if (r.resultado === "valida") {
+      /* Declaração de formadora municipal: a pessoa é a "Formadora municipal" e a responsável por ela é a formadora
+         estadual. Declaração de cursista (ou resposta de um servidor mais antigo, sem o campo tipo): a pessoa é a
+         "Cursista" e quem a orienta é a formadora municipal. */
+      var deFormadora = r.tipo === "formadora";
+      var varias = r.formadoras.length > 1;
       var dados = h("dl", { "class": "dados" }, [
-        linha("Cursista", [r.nome]),
+        linha(deFormadora ? "Formadora municipal" : "Cursista", [r.nome]),
         linha("Carga horária", [r.ch + (typeof r.ch === "number" ? (r.ch === 1 ? " hora" : " horas") : "")]),
         linha("Município", [r.municipio]),
-        linha(r.formadoras.length > 1 ? "Formadoras municipais" : "Formadora municipal", r.formadoras.length ? r.formadoras : ["Não informada"]),
+        linha(deFormadora ? (varias ? "Formadoras estaduais" : "Formadora estadual")
+                          : (varias ? "Formadoras municipais" : "Formadora municipal"),
+              r.formadoras.length ? r.formadoras : ["Não informada"]),
         linha("Emitida em", [r.emissao]),
         linha("Código", [r.codigo])
       ]);
