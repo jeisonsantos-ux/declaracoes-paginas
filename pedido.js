@@ -8,7 +8,7 @@
   var comparador = window.Intl && Intl.Collator ? new Intl.Collator("pt-BR", { sensitivity: "base" }) : null;
 
   function zerar() {
-    estado = { email: "", cpf: "", acesso: "", formadora: "", turmas: [], atual: 0, sel: [], erros: {}, padrao: "" };
+    estado = { email: "", cpf: "", acesso: "", formadora: "", turmas: [], atual: 0, sel: [], erros: {} };
   }
   zerar();
 
@@ -145,8 +145,6 @@
     $("bloco-turma").hidden = estado.turmas.length < 2;
     $("busca").value = "";
     $("mostrar-emitidas").checked = false;   /* por padrão, quem já tem declaração fica escondida */
-    $("marcar-todas").checked = false;
-    $("ch-padrao").value = estado.padrao;
     desenharTurma();
     mostrar("lista");
   }
@@ -170,7 +168,7 @@
     atualizarBarra();
   }
 
-  /* resumo da turma e rótulo de "marcar todas": dependem de quem está escondido (quem já tem declaração) */
+  /* resumo da turma: depende de quem está escondido (quem já tem declaração) */
   function atualizarResumo() {
     var t = turma();
     var mostrando = $("mostrar-emitidas").checked;
@@ -185,7 +183,6 @@
       texto += ": " + partes.join(" e ");
     }
     $("resumo-turma").textContent = texto + ".";
-    $("rotulo-marcar-todas").textContent = emitidas && mostrando ? "Marcar quem ainda não tem declaração" : "Marcar todas";
   }
 
   function chipDe(c) {
@@ -242,7 +239,7 @@
         aviso
       ]);
       var item = { c: c, li: li, chk: chk, campo: campo, aviso: aviso, radios: radios, nomeNorm: norm(c.nome), travada: travada };
-      chk.addEventListener("change", function () { marcar(item, chk.checked); filtrarMarcarTodas(); atualizarBarra(); });
+      chk.addEventListener("change", function () { marcar(item, chk.checked); atualizarBarra(); });
       campo.addEventListener("input", function () {
         campo.value = soDigitos(campo.value);
         var s = selecao()[c.id];
@@ -277,9 +274,11 @@
     if (ligado) {
       var antes = s[c.id] || {};
       var acao = c.estado === "emitida" ? (antes.acao || "") : "";
+      /* a carga horária nunca vem preenchida: cada cursista marcada recebe a CH digitada pela formadora, uma a uma
+         (só quem já tem declaração e vai ser reenviada mostra a CH da declaração que já existe) */
       var ch = c.estado === "emitida"
         ? (acao === "corrigir" ? (antes.ch || "") : String(c.ch))
-        : (antes.ch || (chOk(estado.padrao) ? estado.padrao : ""));
+        : (antes.ch || "");
       s[c.id] = { on: true, ch: ch, acao: acao };
     } else if (s[c.id]) {
       s[c.id].on = false;
@@ -331,7 +330,6 @@
         : "Todas as cursistas desta turma já têm declaração. Marque \u201cMostrar também quem já tem declaração\u201d para vê-las.";
     }
     atualizarAviso(aparecem);
-    filtrarMarcarTodas();
   }
 
   /* quando não resta nenhuma cursista para pedir (todas já têm declaração ou estão na fila), a lista avisa e aponta a saída */
@@ -351,58 +349,8 @@
     caixa.hidden = false;
   }
 
-  /* "Marcar todas" não mexe em quem já tem declaração: reenviar ou corrigir é uma escolha, linha por linha */
-  function alvoDeMarcarTodas() {
-    return itens.filter(function (it) { return visivel(it) && !it.travada && it.c.estado !== "emitida"; });
-  }
-
-  function filtrarMarcarTodas() {
-    var caixa = $("marcar-todas");
-    var alvo = alvoDeMarcarTodas();
-    var ligadas = alvo.filter(function (it) { return it.chk.checked; }).length;
-    caixa.checked = alvo.length > 0 && ligadas === alvo.length;
-    caixa.indeterminate = ligadas > 0 && ligadas < alvo.length;
-    caixa.disabled = alvo.length === 0;
-  }
-
   $("busca").addEventListener("input", filtrar);
   $("mostrar-emitidas").addEventListener("change", function () { filtrar(); atualizarResumo(); });
-
-  $("marcar-todas").addEventListener("change", function () {
-    var ligar = this.checked;
-    alvoDeMarcarTodas().forEach(function (it) { marcar(it, ligar); });
-    filtrarMarcarTodas();
-    atualizarBarra();
-  });
-
-  $("ch-padrao").addEventListener("input", function () {
-    this.value = soDigitos(this.value);
-    estado.padrao = this.value;
-    $("ajuda-padrao").hidden = true;
-  });
-
-  $("btn-aplicar").addEventListener("click", function () {
-    var ajuda = $("ajuda-padrao");
-    if (!chOk(estado.padrao)) {
-      ajuda.textContent = "Digite a carga horária, igual ou menor que " + CFG.chMax + " h, para aplicar às cursistas marcadas.";
-      ajuda.hidden = false;
-      $("ch-padrao").focus();
-      return;
-    }
-    var n = 0, pulou = 0;
-    itens.forEach(function (it) {
-      var s = selecao()[it.c.id];
-      if (!s || !s.on) return;
-      /* quem já tem declaração só recebe a carga horária se a formadora escolheu corrigi-la */
-      if (it.c.estado !== "emitida" || s.acao === "corrigir") { s.ch = estado.padrao; delete estado.erros[it.c.id]; pintar(it); n++; }
-      else pulou++;
-    });
-    var texto = n ? "Carga horária de " + estado.padrao + " h aplicada a " + plural(n, "cursista", "cursistas") + "." : (pulou ? "" : "Marque as cursistas primeiro.");
-    if (pulou) texto += (texto ? " " : "") + "Quem já tem declaração só recebe a nova carga horária se você escolher \u201cCorrigir a carga horária\u201d.";
-    ajuda.textContent = texto;
-    ajuda.hidden = false;
-    atualizarBarra();
-  });
 
   function selecionados() {
     var s = selecao();

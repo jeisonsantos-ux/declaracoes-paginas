@@ -92,12 +92,8 @@ input[type=text]:focus,input[type=email]:focus,input[type=search]:focus,select:f
 .lista-folha{background:var(--papel);border:1px solid var(--linha);border-radius:14px}
 .ferramentas{background:var(--papel);padding:14px 16px;border-radius:14px 14px 0 0;border-bottom:1px solid var(--linha)}
 .ferramentas-linha{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;margin-top:12px}
-.marcar-todas{display:inline-flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;font-weight:700}
-.marcar-todas input,.linha input[type=checkbox]{width:24px;height:24px;margin:0;accent-color:var(--indigo);flex:none}
-.padrao{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto}
-.padrao label{font-weight:700}
-.padrao input{width:76px;min-height:44px;text-align:center;font-weight:700}
-.padrao .btn{min-height:44px;padding:8px 16px}
+.caixa-opcao{display:inline-flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;font-weight:700}
+.caixa-opcao input,.linha input[type=checkbox]{width:24px;height:24px;margin:0;accent-color:var(--indigo);flex:none}
 .linha{display:grid;grid-template-columns:24px minmax(0,1fr) auto;column-gap:14px;row-gap:2px;align-items:center;
   padding:6px 16px;border-top:1px solid var(--linha)}
 .linha:first-child{border-top:0}
@@ -177,7 +173,6 @@ input[type=text]:focus,input[type=email]:focus,input[type=search]:focus,select:f
   h1{font-size:1.6rem}
   .miolo{padding-top:20px}
   .folha{padding:16px}
-  .padrao{margin-left:0;width:100%}
   .dados>div{grid-template-columns:1fr}
   .campo-linha{flex-direction:column}
   .barra{flex-wrap:wrap}
