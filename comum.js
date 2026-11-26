@@ -160,7 +160,11 @@ function icone(nome) {
   return s;
 }
 
+/* o desenho do topo: se o arquivo logo.png faltar no site (por exemplo, esquecido num envio), ele some sem deixar um espaço vazio */
 (function () {
-  var marca = $("marca");
-  if (marca) marca.appendChild(criarSelo("ok", false));
+  var logo = $("logo-topo");
+  if (!logo) return;
+  function esconder() { logo.hidden = true; }
+  if (logo.complete && logo.naturalWidth === 0) esconder();
+  else logo.addEventListener("error", esconder);
 })();
