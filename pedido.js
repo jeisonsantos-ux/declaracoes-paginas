@@ -124,8 +124,16 @@
   /* o que depende dos valores do servidor (CONFIG do Codigo.gs); roda de novo quando eles chegam */
   function aplicarConfig() {
     $("campo-cpf").hidden = !CFG.exigeCpf;
-    $("rodape-lista").textContent = "Não encontrou alguém? Quem já tem declaração fica escondida: marque \u201cMostrar também quem já tem declaração\u201d para vê-la e, " +
-      "se precisar, reenviar a declaração ou corrigir a carga horária. Cursistas com cadastro inativo não aparecem aqui. " +
+    atualizarRodape();
+  }
+  /* o texto no fim da lista só fala do botão "Mostrar também quem já tem declaração" quando a turma tem esse botão */
+  function atualizarRodape() {
+    var t = estado.turmas.length ? turma() : null;
+    $("rodape-lista").textContent = "Não encontrou alguém? " +
+      (t && !temEmitidas(t) ? "" :
+        "Quem já tem declaração fica escondida: marque \u201cMostrar também quem já tem declaração\u201d para vê-la e, " +
+        "se precisar, reenviar a declaração ou corrigir a carga horária. ") +
+      "Cursistas com cadastro inativo não aparecem aqui. " +
       "Se a cursista não está na lista ou o cadastro dela precisa de ajuste, procure " + apoio() + ".";
   }
   aplicarConfig();
@@ -163,9 +171,24 @@
     $("aviso-turma-texto").textContent = t.motivo || "";
     $("area-lista").hidden = !!t.bloqueada;
     $("erro-lista").hidden = true;
+    mostrarOpcaoEmitidas();
     montarLinhas();
     atualizarResumo();
     atualizarBarra();
+  }
+
+  /* alguém desta turma já tem declaração emitida? (quem está só na fila ainda não conta: a lista já mostra essas cursistas) */
+  function temEmitidas(t) {
+    return t.cursistas.some(function (c) { return c.estado === "emitida"; });
+  }
+
+  /* "Mostrar também quem já tem declaração" só aparece na turma em que alguém já tem declaração emitida;
+     sem ninguém para mostrar, o botão não teria o que fazer. Escondido, ele volta a ficar desmarcado. */
+  function mostrarOpcaoEmitidas() {
+    var tem = temEmitidas(turma());
+    $("linha-emitidas").hidden = !tem;
+    if (!tem) $("mostrar-emitidas").checked = false;
+    atualizarRodape();
   }
 
   /* resumo da turma: depende de quem está escondido (quem já tem declaração) */
@@ -338,8 +361,7 @@
     var cs = turma().cursistas;
     var podePedir = cs.some(function (c) { return c.estado === "livre" || c.estado === "pendencia"; });
     if (!cs.length || podePedir || !aparecem) { caixa.hidden = true; return; }
-    var temEmitidas = cs.some(function (c) { return c.estado === "emitida"; });
-    var texto = temEmitidas
+    var texto = temEmitidas(turma())
       ? "Todas as cursistas desta turma já têm declaração ou estão na fila para envio, então não há mais nada para pedir agora. " +
         ($("mostrar-emitidas").checked
           ? "Para reenviar uma declaração ou corrigir a carga horária, marque a cursista na lista. "
